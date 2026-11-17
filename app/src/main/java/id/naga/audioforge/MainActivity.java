@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
         bRt.setOnClickListener(v -> { expRate = expRate == 44100 ? 48000 : (expRate == 48000 ? 96000 : 44100); bRt.setText("RATE: " + expRate + " Hz"); });
         bBr.setOnClickListener(v -> { int[] brOpts = {128, 192, 256, 320}; for (int i=0;i<brOpts.length;i++) if (brOpts[i]==expBr){ expBr=brOpts[(i+1)%brOpts.length]; break; } bBr.setText(expBr + " kbps"); });
         bCh.setOnClickListener(v -> { expCh = (expCh + 1) % 3; String[] chNames = {"CH: STEREO", "CH: MONO", "CH: SWAP L-R"}; bCh.setText(chNames[expCh]); });
+        findViewById(R.id.btnExportWav32f).setOnClickListener(v -> exportAudio(2, expRate, 320, expCh));
+        findViewById(R.id.btnExportFlac).setOnClickListener(v -> exportAudio(3, expRate, 320, expCh));
         findViewById(R.id.btnExportConverted).setOnClickListener(v -> exportAudio(expFmt, expRate, expBr, expCh));
 
         findViewById(R.id.btnNorm14).setOnClickListener(v -> asyncRun("Normalizing -14 LUFS...", () -> { float g = nativeNormalizeLufs(-14f); runOnUiThread(() -> refresh(String.format(Locale.US, "NORMALIZED -14 LUFS (%+.1f dB)", g))); }));

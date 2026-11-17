@@ -65,7 +65,11 @@
                     <Button android:id="@+id/btnBitrateSelect" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="256 kbps (AAC)" />
                     <Button android:id="@+id/btnChannelSelect" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="CH: STEREO" />
                 </LinearLayout>
-                <Button android:id="@+id/btnExportConverted" style="@style/BtnEmerald" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="⚡ EKSPOR FORMAT PILIHAN KE /sdcard/Music/" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+                    <Button android:id="@+id/btnExportWav32f" style="@style/BtnCyan" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="💾 WAV 32-BIT FLOAT" />
+                    <Button android:id="@+id/btnExportFlac" style="@style/BtnEmerald" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="💎 FLAC LOSSLESS" />
+                </LinearLayout>
+                <Button android:id="@+id/btnExportConverted" style="@style/BtnSlate" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="⚡ EKSPOR FORMAT CUSTOM PILIHAN" />
             </LinearLayout>
 
             <LinearLayout android:id="@+id/panelMaster" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
