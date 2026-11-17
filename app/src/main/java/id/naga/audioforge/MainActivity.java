@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnJm = findViewById(R.id.btnJogMode);
         btnJm.setOnClickListener(v -> { boolean m = !jogView.isMicroMode(); jogView.setMicroMode(m); btnJm.setText(m ? "MIKRO: 5ms" : "NORMAL: 100ms"); });
+        findViewById(R.id.btnPlayFromPos).setOnClickListener(v -> { if (durMs > 0) nativeSetPlaybackRange(posMs, durMs, true); });
         findViewById(R.id.btnPlaySelection).setOnClickListener(v -> { if (durMs > 0) nativeSetPlaybackRange(inMs, outMs, true); });
         findViewById(R.id.btnPlayAll).setOnClickListener(v -> { if (durMs > 0) nativeSetPlaybackRange(0, durMs, true); });
         findViewById(R.id.btnStopAudio).setOnClickListener(v -> nativeTogglePlay(false));
