@@ -1,0 +1,3 @@
+# ninja log v5
+0	1262	1794937833949533737	CMakeFiles/audioforge_ndk.dir/audio_engine.cpp.o	773887542f8fa05e
+1265	1293	1794937833984534265	/home/opc/projects/AudioForgeNDK/app/build/intermediates/cxx/Debug/2g735617/obj/arm64-v8a/libaudioforge_ndk.so	ff1f6cc6e45ebe4b

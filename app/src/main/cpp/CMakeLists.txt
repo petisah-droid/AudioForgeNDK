@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.22.1)
+project("audioforge_ndk" LANGUAGES CXX)
+add_library(audioforge_ndk SHARED audio_engine.cpp)
+find_library(log-lib log)
+find_library(aaudio-lib aaudio)
+find_library(mediandk-lib mediandk)
+target_link_libraries(audioforge_ndk ${log-lib} ${aaudio-lib} ${mediandk-lib})

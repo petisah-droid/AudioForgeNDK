@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="#070A10" android:padding="10dp">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:background="#0F172A" android:padding="8dp">
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="AUDIOFORGE NDK // STUDIO 48kHz" android:textColor="#00E5FF" android:textSize="13sp" android:textStyle="bold" />
+            <TextView android:id="@+id/tvTelemetry" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="IN: 0.000s | OUT: 0.000s | DUR: 0.000s" android:textColor="#94A3B8" android:textSize="11sp" android:fontFamily="monospace" />
+        </LinearLayout>
+        <Button android:id="@+id/btnLoadAudio" style="@style/BtnCyan" android:layout_width="wrap_content" android:layout_height="40dp" android:text="+ LOAD FILE" />
+    </LinearLayout>
+
+    <id.naga.audioforge.PrecisionWaveformView android:id="@+id/waveformView" android:layout_width="match_parent" android:layout_height="155dp" android:layout_marginTop="6dp" />
+    <id.naga.audioforge.JogWheelView android:id="@+id/jogWheelView" android:layout_width="match_parent" android:layout_height="46dp" android:layout_marginTop="6dp" />
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+        <Button android:id="@+id/btnNudgeM10" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="3dp" android:text="-10ms" />
+        <Button android:id="@+id/btnNudgeM1" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="3dp" android:text="-1ms" />
+        <Button android:id="@+id/btnJogMode" style="@style/BtnAmber" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.3" android:layout_marginEnd="3dp" android:text="100ms/5ms" />
+        <Button android:id="@+id/btnNudgeP1" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="3dp" android:text="+1ms" />
+        <Button android:id="@+id/btnNudgeP10" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="+10ms" />
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="4dp">
+        <Button android:id="@+id/btnPlaySelection" style="@style/BtnEmerald" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.3" android:layout_marginEnd="4dp" android:text="▶ PLAY IN-OUT" />
+        <Button android:id="@+id/btnPlayAll" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="4dp" android:text="▶ FULL" />
+        <Button android:id="@+id/btnStopAudio" style="@style/BtnRed" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.8" android:text="■ STOP" />
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp" android:background="#0F172A" android:padding="4dp">
+        <Button android:id="@+id/tabCutMerge" style="@style/BtnCyan" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="3dp" android:text="CUT/MERGE" />
+        <Button android:id="@+id/tabConvert" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="3dp" android:text="CONVERT" />
+        <Button android:id="@+id/tabMaster" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="3dp" android:text="MASTER" />
+        <Button android:id="@+id/tabDspLab" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:text="DSP LAB" />
+    </LinearLayout>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="6dp" android:background="#0B0F17" android:padding="8dp">
+        <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:id="@+id/panelCutMerge" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <Button android:id="@+id/btnSetIn" style="@style/BtnEmerald" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="[ SET IN" />
+                    <Button android:id="@+id/btnSetOut" style="@style/BtnAmber" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="SET OUT ]" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+                    <Button android:id="@+id/btnTrimKeep" style="@style/BtnCyan" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="✂ TRIM IN-OUT" />
+                    <Button android:id="@+id/btnRippleDelete" style="@style/BtnRed" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="⌫ RIPPLE DEL" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+                    <Button android:id="@+id/btnAppendClip" style="@style/BtnEmerald" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.3" android:layout_marginEnd="6dp" android:text="+ GABUNG KLIP" />
+                    <Button android:id="@+id/btnCrossfadeCycle" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="XFADE: 250ms" />
+                </LinearLayout>
+                <Button android:id="@+id/btnQuickSaveWav" style="@style/BtnCyan" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="💾 SIMPAN MASTER WAV 32-BIT FLOAT" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/panelConvert" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <Button android:id="@+id/btnFmtSelect" style="@style/BtnAmber" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="FMT: WAV 32f" />
+                    <Button android:id="@+id/btnSampleRateSelect" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="RATE: 48000 Hz" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+                    <Button android:id="@+id/btnBitrateSelect" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="256 kbps (AAC)" />
+                    <Button android:id="@+id/btnChannelSelect" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="CH: STEREO" />
+                </LinearLayout>
+                <Button android:id="@+id/btnExportConverted" style="@style/BtnEmerald" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="⚡ EKSPOR FORMAT PILIHAN KE /sdcard/Music/" />
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/panelMaster" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <Button android:id="@+id/btnNorm14" style="@style/BtnCyan" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="-14 LUFS (YT)" />
+                    <Button android:id="@+id/btnNorm16" style="@style/BtnAmber" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="-16 LUFS (POD)" />
+                </LinearLayout>
+                <Button android:id="@+id/btnSpectralDenoise" style="@style/BtnEmerald" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="🔇 FFT SPECTRAL DENOISER" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+                    <Button android:id="@+id/btnEqVocal" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="4dp" android:text="VOCAL EQ" />
+                    <Button android:id="@+id/btnEqWarmth" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="4dp" android:text="WARM EQ" />
+                    <Button android:id="@+id/btnFadeInOut" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="FADE 1.5s" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/panelDspLab" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <Button android:id="@+id/btnSpeedUp" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="4dp" android:text="TEMPO 1.25x" />
+                    <Button android:id="@+id/btnSlowDown" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="4dp" android:text="TEMPO 0.80x" />
+                    <Button android:id="@+id/btnPitchUp" style="@style/BtnAmber" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="PITCH +2 ST" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+                    <Button android:id="@+id/btnVocalRemove" style="@style/BtnCyan" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="🎤 KARAOKE" />
+                    <Button android:id="@+id/btnVocalIsolate" style="@style/BtnEmerald" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="🗣 ISOLASI VOKAL" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+                    <Button android:id="@+id/btnStripSilence" style="@style/BtnRed" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:text="⚡ STRIP HENING" />
+                    <Button android:id="@+id/btn8DSpatial" style="@style/BtnSlate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="🎧 8D SPATIAL" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+    </ScrollView>
+
+    <TextView android:id="@+id/tvStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" android:background="#0F172A" android:padding="6dp"
+        android:text="READY // 32-bit Float Uncompressed &amp; FLAC Lossless Studio" android:textColor="#10B981" android:textSize="11sp" android:fontFamily="monospace" />
+</LinearLayout>

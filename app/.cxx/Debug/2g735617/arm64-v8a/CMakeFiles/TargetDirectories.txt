@@ -1,0 +1,3 @@
+/home/opc/projects/AudioForgeNDK/app/.cxx/Debug/2g735617/arm64-v8a/CMakeFiles/audioforge_ndk.dir
+/home/opc/projects/AudioForgeNDK/app/.cxx/Debug/2g735617/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/opc/projects/AudioForgeNDK/app/.cxx/Debug/2g735617/arm64-v8a/CMakeFiles/rebuild_cache.dir
