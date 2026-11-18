@@ -46,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     public native void nativeApply8DSpatial();
     public native void nativeTimePitchProcess(float tempoRatio, float semitones);
     public native boolean nativeExportAudio(String outPath, int format, int sampleRate, int bitrateKbps, int channelMode);
+    public native String nativeGetOrigSpecInfo();
+    public native boolean nativeExportOriginalSpec(String baseDir, String stamp);
+    public native boolean nativeUndo();
+    public native void nativeReverseAudio();
 
     private static final int REQ_LOAD = 101, REQ_MERGE = 102;
     private PrecisionWaveformView waveView;
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnPlayFromPos).setOnClickListener(v -> { if (durMs > 0) nativeSetPlaybackRange(posMs, durMs, true); });
         findViewById(R.id.btnPlaySelection).setOnClickListener(v -> { if (durMs > 0) nativeSetPlaybackRange(inMs, outMs, true); });
         findViewById(R.id.btnPlayAll).setOnClickListener(v -> { if (durMs > 0) nativeSetPlaybackRange(0, durMs, true); });
+        findViewById(R.id.btnUndo).setOnClickListener(v -> { if (nativeUndo()) refresh("UNDO BERHASIL"); else tvStat.setText("TIDAK ADA UNDO"); });
         findViewById(R.id.btnStopAudio).setOnClickListener(v -> nativeTogglePlay(false));
 
         findViewById(R.id.btnSetIn).setOnClickListener(v -> { if (durMs > 0) { inMs = nativeSnapZeroCrossingMs(posMs); if (inMs >= outMs) outMs = durMs; waveView.setMarkers(inMs, outMs); updateTele(); tvStat.setText("IN SNAP: " + String.format(Locale.US, "%.3fs", inMs/1000.0)); }});
@@ -107,17 +112,13 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnXf = findViewById(R.id.btnCrossfadeCycle);
         btnXf.setOnClickListener(v -> { int[] o = {0, 100, 250, 500, 1000, 2000}; for (int i=0;i<o.length;i++) if (o[i]==xfadeMs){ xfadeMs=o[(i+1)%o.length]; break; } btnXf.setText("XFADE: " + xfadeMs + "ms"); });
-        findViewById(R.id.btnQuickSaveWav).setOnClickListener(v -> exportAudio(2, 48000, 256, 0)); // WAV 32-bit Float Master
+        findViewById(R.id.btnQuickSaveWav).setOnClickListener(v -> exportOriginalSpec());
 
         Button bFmt = findViewById(R.id.btnFmtSelect), bRt = findViewById(R.id.btnSampleRateSelect), bBr = findViewById(R.id.btnBitrateSelect), bCh = findViewById(R.id.btnChannelSelect);
-        bFmt.setOnClickListener(v -> {
-            expFmt = (expFmt + 1) % 5;
-            String[] fmtNames = {"FMT: WAV 16-BIT", "FMT: WAV 24-BIT", "FMT: WAV 32f FLOAT", "FMT: FLAC LOSSLESS", "FMT: M4A AAC 320k"};
-            bFmt.setText(fmtNames[expFmt]);
-        });
+        bFmt.setOnClickListener(v -> { expFmt = (expFmt + 1) % 6; String[] n = {"FMT: WAV 16-BIT", "FMT: WAV 24-BIT", "FMT: WAV 32f FLOAT", "FMT: FLAC LOSSLESS", "FMT: M4A AAC", "FMT: MP3 LAME"}; bFmt.setText(n[expFmt]); });
         bRt.setOnClickListener(v -> { expRate = expRate == 44100 ? 48000 : (expRate == 48000 ? 96000 : 44100); bRt.setText("RATE: " + expRate + " Hz"); });
-        bBr.setOnClickListener(v -> { int[] brOpts = {128, 192, 256, 320}; for (int i=0;i<brOpts.length;i++) if (brOpts[i]==expBr){ expBr=brOpts[(i+1)%brOpts.length]; break; } bBr.setText(expBr + " kbps"); });
-        bCh.setOnClickListener(v -> { expCh = (expCh + 1) % 3; String[] chNames = {"CH: STEREO", "CH: MONO", "CH: SWAP L-R"}; bCh.setText(chNames[expCh]); });
+        bBr.setOnClickListener(v -> { int[] br = {128, 192, 256, 320}; for (int i=0;i<br.length;i++) if (br[i]==expBr){ expBr=br[(i+1)%br.length]; break; } bBr.setText(expBr + " kbps"); });
+        bCh.setOnClickListener(v -> { expCh = (expCh + 1) % 3; String[] c = {"CH: STEREO", "CH: MONO", "CH: SWAP L-R"}; bCh.setText(c[expCh]); });
         findViewById(R.id.btnExportWav32f).setOnClickListener(v -> exportAudio(2, expRate, 320, expCh));
         findViewById(R.id.btnExportFlac).setOnClickListener(v -> exportAudio(3, expRate, 320, expCh));
         findViewById(R.id.btnExportConverted).setOnClickListener(v -> exportAudio(expFmt, expRate, expBr, expCh));
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnVocalIsolate).setOnClickListener(v -> { nativeMidSideProcess(2); refresh("ISOLASI VOKAL AKTIF"); });
         findViewById(R.id.btnStripSilence).setOnClickListener(v -> asyncRun("Strip hening otomatis...", () -> { int c = nativeStripSilence(-42f); runOnUiThread(() -> refresh("STRIP HENING: " + c + " JEDA DIPADATKAN")); }));
         findViewById(R.id.btn8DSpatial).setOnClickListener(v -> { nativeApply8DSpatial(); refresh("8D SPATIAL AUDIO AKTIF"); });
+        findViewById(R.id.btnReverse).setOnClickListener(v -> { nativeReverseAudio(); refresh("AUDIO DIBALIK (REVERSE)"); });
         h.post(tick);
     }
 
@@ -163,18 +165,28 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) { return null; }
     }
 
-    private void exportAudio(int fmt, int sr, int br, int ch) {
+    private void exportOriginalSpec() {
         if (durMs <= 0) { tvStat.setText("BELUM ADA AUDIO"); return; }
-        asyncRun("Merender audio kualitas studio...", () -> {
+        asyncRun("Menyimpan spek asli (" + nativeGetOrigSpecInfo() + ")...", () -> {
             File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), "AudioForge"); if (!dir.exists()) dir.mkdirs();
-            String ext = (fmt == 3) ? ".flac" : ((fmt == 4) ? ".m4a" : ".wav");
-            File f = new File(dir, "FORGE_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date()) + ext);
-            boolean ok = nativeExportAudio(f.getAbsolutePath(), fmt, sr, br, ch);
-            runOnUiThread(() -> { tvStat.setText(ok ? "SAVED: " + f.getAbsolutePath() : "EXPORT GAGAL"); if (ok) Toast.makeText(this, "Tersimpan Lossless: " + f.getName(), Toast.LENGTH_LONG).show(); });
+            String stamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            boolean ok = nativeExportOriginalSpec(dir.getAbsolutePath(), stamp);
+            runOnUiThread(() -> { tvStat.setText(ok ? "SAVED ASLI: " + nativeGetOrigSpecInfo() : "EXPORT GAGAL"); if (ok) Toast.makeText(this, "Tersimpan Spek Asli: " + nativeGetOrigSpecInfo(), Toast.LENGTH_LONG).show(); });
         });
     }
 
-    private void refresh(String m) { durMs = nativeGetDurationMs(); inMs = 0; outMs = durMs; posMs = 0; waveView.updateData(nativeGetWaveformPeaks(160), durMs, inMs, outMs); updateTele(); tvStat.setText(m); }
+    private void exportAudio(int fmt, int sr, int br, int ch) {
+        if (durMs <= 0) { tvStat.setText("BELUM ADA AUDIO"); return; }
+        asyncRun("Merender audio...", () -> {
+            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), "AudioForge"); if (!dir.exists()) dir.mkdirs();
+            String ext = (fmt == 5) ? ".mp3" : ((fmt == 3) ? ".flac" : ((fmt == 4) ? ".m4a" : ".wav"));
+            File f = new File(dir, "FORGE_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date()) + ext);
+            boolean ok = nativeExportAudio(f.getAbsolutePath(), fmt, sr, br, ch);
+            runOnUiThread(() -> { tvStat.setText(ok ? "SAVED: " + f.getAbsolutePath() : "EXPORT GAGAL"); if (ok) Toast.makeText(this, "Tersimpan: " + f.getName(), Toast.LENGTH_LONG).show(); });
+        });
+    }
+
+    private void refresh(String m) { durMs = nativeGetDurationMs(); inMs = 0; outMs = durMs; posMs = 0; waveView.updateData(nativeGetWaveformPeaks(160), durMs, inMs, outMs); updateTele(); tvStat.setText(m + " [" + nativeGetOrigSpecInfo() + "]"); }
     private void updateTele() { tvTele.setText(String.format(Locale.US, "IN: %.3fs | OUT: %.3fs | POS: %.3fs | DUR: %.3fs", inMs/1000.0, outMs/1000.0, posMs/1000.0, durMs/1000.0)); }
     private void asyncRun(String m, Runnable r) { tvStat.setText(m); new Thread(r).start(); }
 }
