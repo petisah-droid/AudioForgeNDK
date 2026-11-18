@@ -1,6 +1,5 @@
 # ninja log v5
-1013	1039	1794956224328334831	/home/opc/projects/AudioForgeNDK/app/build/intermediates/cxx/Debug/u1i4m3q1/obj/arm64-v8a/libaudioforge_ndk.so	fc261e7cb31a695d
-3	1013	1794956224296334350	CMakeFiles/audioforge_ndk.dir/audio_engine.cpp.o	773887542f8fa05e
-3	1272	1794965202840428220	CMakeFiles/audioforge_ndk.dir/audio_engine.cpp.o	78a67d6a90b20525
-4	1301	1794965327956310946	CMakeFiles/audioforge_ndk.dir/audio_engine.cpp.o	78a67d6a90b20525
 1301	1328	1794965327989311442	/home/opc/projects/AudioForgeNDK/app/build/intermediates/cxx/Debug/u1i4m3q1/obj/arm64-v8a/libaudioforge_ndk.so	354f9eb015f4c581
+4	1301	1794965327956310946	CMakeFiles/audioforge_ndk.dir/audio_engine.cpp.o	78a67d6a90b20525
+3	1281	1794966247650150364	CMakeFiles/audioforge_ndk.dir/audio_engine.cpp.o	78a67d6a90b20525
+1282	1310	1794966247683150861	/home/opc/projects/AudioForgeNDK/app/build/intermediates/cxx/Debug/u1i4m3q1/obj/arm64-v8a/libaudioforge_ndk.so	7e01652aa817a7e8

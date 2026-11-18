@@ -1,3 +1,4 @@
+#include <FLAC/stream_encoder.h>
 #include <jni.h>
 #include <lame/lame.h>
 #include <aaudio/AAudio.h>
@@ -211,8 +212,44 @@ static bool writeAudioFile(const std::string& path, const AudioBuffer& buf, int 
         f.close(); lame_close(lame); return true;
     }
 
-    if (format == 3 || format == 4) {
-        const char* mime = (format == 3) ? "audio/flac" : "audio/mp4a-latm";
+    if (format == 3) {
+        FLAC__StreamEncoder* enc = FLAC__stream_encoder_new();
+        if (!enc) return false;
+        FLAC__stream_encoder_set_verify(enc, false);
+        FLAC__stream_encoder_set_compression_level(enc, 5);
+        FLAC__stream_encoder_set_channels(enc, ch);
+        FLAC__stream_encoder_set_bits_per_sample(enc, 24);
+        FLAC__stream_encoder_set_sample_rate(enc, rate);
+        FLAC__stream_encoder_set_total_samples_estimate(enc, l.size());
+
+        if (FLAC__stream_encoder_init_file(enc, path.c_str(), nullptr, nullptr) != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
+            FLAC__stream_encoder_delete(enc);
+            return false;
+        }
+
+        const size_t chunk = 4096;
+        std::vector<FLAC__int32> pcm(chunk * ch);
+        for (size_t pos = 0; pos < l.size(); pos += chunk) {
+            size_t n = std::min(chunk, l.size() - pos);
+            for (size_t i = 0; i < n; ++i) {
+                float lv = std::clamp(l[pos+i], -1.0f, 1.0f);
+                float rv = std::clamp(r[pos+i], -1.0f, 1.0f);
+                if (ch == 1) {
+                    pcm[i] = (FLAC__int32)(0.5f * (lv + rv) * 8388607.0f);
+                } else {
+                    pcm[i*2] = (FLAC__int32)(lv * 8388607.0f);
+                    pcm[i*2+1] = (FLAC__int32)(rv * 8388607.0f);
+                }
+            }
+            FLAC__stream_encoder_process_interleaved(enc, pcm.data(), n);
+        }
+        FLAC__stream_encoder_finish(enc);
+        FLAC__stream_encoder_delete(enc);
+        return true;
+    }
+
+    if (format == 4) {
+        const char* mime = "audio/mp4a-latm";
         int fd = open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644); if (fd < 0) return false;
         AMediaMuxer* mux = AMediaMuxer_new(fd, AMEDIAMUXER_OUTPUT_FORMAT_MPEG_4); close(fd); if (!mux) return false;
         AMediaFormat* fmt = AMediaFormat_new(); AMediaFormat_setString(fmt, AMEDIAFORMAT_KEY_MIME, mime);
